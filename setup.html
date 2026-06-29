@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعداد المتجر - AnyThing Souqe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:#f0f2f5; color:#202124; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+        .setup-card { background:white; border-radius:16px; padding:40px; max-width:500px; width:100%; box-shadow:0 4px 20px rgba(0,0,0,0.12); }
+        .setup-card h1 { text-align:center; color:#1a73e8; margin-bottom:5px; }
+        .setup-card p { text-align:center; color:#5f6368; margin-bottom:25px; }
+        .step { display:none; }
+        .step.active { display:block; }
+        .step-number { width:36px; height:36px; border-radius:50%; background:#1a73e8; color:white; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-weight:bold; }
+        .form-group { margin-bottom:15px; }
+        .form-group label { display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem; }
+        .form-group input { width:100%; padding:12px 14px; border:2px solid #dadce0; border-radius:10px; font-size:0.95rem; outline:none; transition:all 0.3s; }
+        .form-group input:focus { border-color:#1a73e8; }
+        .btn-primary { width:100%; padding:14px; background:#1a73e8; color:white; border:none; border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.3s; }
+        .btn-primary:hover { background:#1557b0; }
+        .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+        .success { color:#34a853; text-align:center; padding:20px; }
+        .success i { font-size:3rem; margin-bottom:10px; }
+        .error { color:#ea4335; text-align:center; padding:10px; background:#fce8e6; border-radius:8px; margin-top:10px; display:none; }
+        .info { text-align:center; color:#5f6368; margin-top:15px; font-size:0.85rem; }
+        .loader { text-align:center; padding:20px; }
+        .loader i { font-size:2rem; color:#1a73e8; animation:spin 1s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .status-list { margin:20px 0; }
+        .status-item { display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #f0f0f0; font-size:0.9rem; }
+        .status-item i { width:20px; }
+        .status-item.done { color:#34a853; }
+        .status-item.pending { color:#5f6368; }
+        .status-item.error { color:#ea4335; }
+    </style>
+</head>
+<body>
+
+<div class="setup-card">
+    <h1>AnyThing Souqe</h1>
+    <p>إعداد المتجر لأول مرة</p>
+
+    <!-- Step 1: Admin Account -->
+    <div class="step active" id="step1">
+        <div class="step-number">1</div>
+        <h3 style="text-align:center;margin-bottom:20px;">إنشاء حساب المدير</h3>
+        <form id="setupForm">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="adminName" value="Mohammed Bittar" required>
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="adminEmail" value="MohaBittarInfo@gmail.com" required>
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="adminPhone" value="0553260525" required>
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="adminPassword" value="AdminMohaBittarInfo12" minlength="6" required>
+            </div>
+            <div class="form-group">
+                <label>تأكيد كلمة المرور</label>
+                <input type="password" id="adminPasswordConfirm" value="AdminMohaBittarInfo12" required>
+            </div>
+            <div class="error" id="setupError"></div>
+            <button type="submit" class="btn-primary" id="setupBtn">إنشاء الحساب و تهيئة المتجر</button>
+        </form>
+        <div class="info">حساب المدير: <strong>MohaBittarInfo@gmail.com</strong></div>
+    </div>
+
+    <!-- Step 2: Progress -->
+    <div class="step" id="step2">
+        <div class="loader"><i class="fas fa-spinner"></i></div>
+        <p style="text-align:center;">جاري تهيئة المتجر...</p>
+        <div class="status-list" id="statusList"></div>
+    </div>
+
+    <!-- Step 3: Complete -->
+    <div class="step" id="step3">
+        <div class="success">
+            <i class="fas fa-check-circle"></i>
+            <h2>تم التهيئة بنجاح!</h2>
+            <p style="margin-top:10px;">تم إنشاء حساب المدير وإعداد المتجر</p>
+        </div>
+        <a href="admin/" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:20px;">
+            <i class="fas fa-cog"></i> الذهاب للوحة التحكم
+        </a>
+        <a href="index.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:10px;background:#34a853;">
+            <i class="fas fa-store"></i> عرض المتجر
+        </a>
+    </div>
+</div>
+
+<script type="module">
+import { auth, db, collection, doc, getDocs, getDoc, addDoc, setDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword } from './js/firebase-config.js';
+
+const $ = (id) => document.getElementById(id);
+const step1 = $('step1');
+const step2 = $('step2');
+const step3 = $('step3');
+const statusList = $('statusList');
+const setupBtn = $('setupBtn');
+
+function addStatus(text, state) {
+    const div = document.createElement('div');
+    div.className = `status-item ${state}`;
+    div.innerHTML = `<i class="fas fa-${state === 'done' ? 'check-circle' : state === 'error' ? 'exclamation-circle' : 'spinner fa-pulse'}"></i> ${text}`;
+    statusList.appendChild(div);
+}
+
+function setStatus(index, text, state) {
+    const items = statusList.querySelectorAll('.status-item');
+    if (items[index]) {
+        items[index].className = `status-item ${state}`;
+        items[index].innerHTML = `<i class="fas fa-${state === 'done' ? 'check-circle' : state === 'error' ? 'exclamation-circle' : 'spinner fa-pulse'}"></i> ${text}`;
+    }
+}
+
+$('setupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = $('adminName').value.trim();
+    const email = $('adminEmail').value.trim();
+    const phone = $('adminPhone').value.trim();
+    const password = $('adminPassword').value;
+    const confirm = $('adminPasswordConfirm').value;
+
+    const errorDiv = $('setupError');
+    errorDiv.style.display = 'none';
+
+    if (password !== confirm) {
+        errorDiv.textContent = 'كلمة المرور غير متطابقة';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    if (password.length < 6) {
+        errorDiv.textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+        errorDiv.style.display = 'block';
+        return;
+    }
+
+    setupBtn.disabled = true;
+    setupBtn.textContent = 'جاري التهيئة...';
+    step1.classList.remove('active');
+    step2.classList.add('active');
+
+    // Status items
+    addStatus('إنشاء حساب المدير في Firebase', 'pending');
+    addStatus('إنشاء ملف المستخدم في قاعدة البيانات', 'pending');
+    addStatus('إعدادات المتجر الأساسية', 'pending');
+    addStatus('الأقسام الافتراضية', 'pending');
+    addStatus('منتجات تجريبية', 'pending');
+    addStatus('تهيئة النظام', 'pending');
+
+    try {
+        // 1. Create admin account
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        setStatus(0, '✅ إنشاء حساب المدير في Firebase', 'done');
+
+        // 2. Create user document
+        await setDoc(doc(db, 'users', cred.user.uid), {
+            name,
+            email,
+            phone,
+            points: 0,
+            role: 'admin',
+            createdAt: new Date().toISOString()
+        });
+        setStatus(1, '✅ إنشاء ملف المستخدم في قاعدة البيانات', 'done');
+
+        // 3. Settings
+        await setDoc(doc(db, 'settings', 'general'), {
+            whatsapp: '0553260525',
+            phone: '0553260525',
+            location: 'المملكة العربية السعودية',
+            storeName: 'AnyThing Souqe',
+            logo: '',
+            updatedAt: new Date().toISOString()
+        });
+        setStatus(2, '✅ إعدادات المتجر الأساسية', 'done');
+
+        // 4. Default categories
+        const catNames = ['خضروات', 'فواكه', 'معلبات', 'مشروبات'];
+        const catColors = ['#4caf50', '#ff9800', '#2196f3', '#9c27b0'];
+        for (let i = 0; i < catNames.length; i++) {
+            await addDoc(collection(db, 'categories'), {
+                name: catNames[i],
+                image: `https://via.placeholder.com/80/${catColors[i].replace('#','')}/ffffff?text=${encodeURIComponent(catNames[i][0])}`,
+                createdAt: new Date().toISOString()
+            });
+        }
+        setStatus(3, '✅ إنشاء الأقسام الافتراضية', 'done');
+
+        // 5. Sample products
+        const sampleProducts = [
+            { name: 'طماطم طازجة', description: 'طماطم طازجة من المزرعة', price: 5.50, unit: 'kg', stockStatus: 'in-stock', colors: ['#ff0000'], categoryId: '' },
+            { name: 'خيار طازج', description: 'خيار طازج مقرمش', price: 3.75, unit: 'kg', stockStatus: 'in-stock', colors: ['#4caf50'], categoryId: '' },
+            { name: 'تفاح أحمر', description: 'تفاح أحمر فاخر', price: 8.00, unit: 'kg', stockStatus: 'in-stock', colors: ['#ff0000', '#ffff00'], categoryId: '' },
+            { name: 'عصير برتقال طازج', description: 'عصير برتقال طبيعي 100%', price: 12.00, unit: 'liter', stockStatus: 'in-stock', colors: ['#ff9800'], categoryId: '' },
+            { name: 'مربى فراولة', description: 'مربى فراولة طبيعية', price: 15.00, unit: 'box', stockStatus: 'out-of-stock', colors: ['#e91e63'], categoryId: '' },
+            { name: 'مياه معدنية 1.5L', description: 'مياه معدنية نقية', price: 2.00, unit: 'bottle', stockStatus: 'in-stock', colors: ['#2196f3'], categoryId: '' }
+        ];
+
+        // Get the created categories
+        const catSnap = await getDocs(collection(db, 'categories'));
+        const cats = [];
+        catSnap.forEach(d => cats.push({ id: d.id, name: d.data().name }));
+
+        for (let i = 0; i < sampleProducts.length; i++) {
+            const p = sampleProducts[i];
+            // Assign category based on index
+            const catIdx = Math.min(i, cats.length - 1);
+            await addDoc(collection(db, 'products'), {
+                ...p,
+                categoryId: cats[catIdx]?.id || '',
+                category: cats[catIdx]?.id || '',
+                image: `https://via.placeholder.com/300/1a73e8/ffffff?text=${encodeURIComponent(p.name)}`,
+                active: true,
+                createdAt: new Date().toISOString()
+            });
+        }
+        setStatus(4, '✅ إنشاء منتجات تجريبية', 'done');
+
+        // 6. Sign in
+        await signInWithEmailAndPassword(auth, email, password);
+        setStatus(5, '✅ تم تهيئة النظام بنجاح', 'done');
+
+        // Go to complete step
+        setTimeout(() => {
+            step2.classList.remove('active');
+            step3.classList.add('active');
+        }, 1000);
+
+    } catch (e) {
+        console.error('Setup error:', e);
+        const msg = e.code === 'auth/email-already-in-use' ? 'البريد الإلكتروني مستخدم مسبقاً. قم بتسجيل الدخول أو استخدم بريداً آخر.' : e.message || 'خطأ في التهيئة';
+
+        // Find which step failed
+        for (let i = 0; i < 6; i++) {
+            const items = statusList.querySelectorAll('.status-item');
+            if (items[i] && items[i].classList.contains('pending')) {
+                setStatus(i, `❌ ${msg}`, 'error');
+                break;
+            }
+        }
+
+        setupBtn.disabled = false;
+        setupBtn.textContent = 'إعادة المحاولة';
+        step1.classList.add('active');
+    }
+});
+</script>
+</body>
+</html>
