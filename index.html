@@ -2277,7 +2277,7 @@ function loadPayPalButtons(){
       const total=Math.max(0,sub+dlvr-discAmt);
       return actions.order.create({
         purchase_units:[{
-          amount:{value:total.toFixed(2),currency_code:'AED'},
+          amount:{value:total.toFixed(2),currency_code:'USD'},
           description:'AnyThing Souqe Order'
         }]
       });
