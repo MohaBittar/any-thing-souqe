@@ -3068,7 +3068,7 @@ async function saveCat(e){
 function renderOrdersTable(){
   const tb=$('oTb');
   tb.innerHTML=orders.map(o=>{
-    const payMap={cash:'💵 Cash',card:'💳 Card',points:'⭐ Points',paypal:'🅿️ PayPal'};
+ const payMap={cash:'💵 Cash',points:'⭐ Points',paypal:'🅿️ PayPal'};
     return`<tr>
 <td><strong>#${o.id.slice(-6)}</strong></td>
 <td>${o.userName||o.userEmail||'—'}<br><small style="color:var(--gray)">${o.userPhone||''}</small></td>
